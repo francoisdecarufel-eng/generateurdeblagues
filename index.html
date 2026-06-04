@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Générateur de Requêtes - Activité de Blagues</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- React & ReactDOM CDN -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <!-- Babel CDN pour compiler le JSX à la volée dans le navigateur -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  
+  <style>
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-slideUp { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800 font-sans pb-12">
+
+  <div id="root"></div>
+
+  <!-- Script React écrit en JSX, compilé par Babel -->
+  <script type="text/babel">
+    const { useState } = React;
+
+    // --- COMPOSANTS D'ICÔNES SVG INTERNES (Pour éliminer les dépendances externes lourdes) ---
+    const SettingsIcon = ({ size = 18 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
+    );
+    const ImageIcon = ({ size = 18 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    );
+    const MousePointerClickIcon = ({ size = 18 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4.1 12 6s-1.5-1.5-3-1.5C6 4.5 5 7 5 10c0 4 2.5 6 3 9l.5 3.5h7L16 19c.5-3 3-5 3-9 0-3-1-5.5-4-5.9z"/><path d="m12 6 .5-4M9 4.5 7 1.5M15 4.5l2-3"/></svg>
+    );
+    const MessageSquareIcon = ({ size = 18 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    );
+    const PlayIcon = ({ size = 18, fill = "none" }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+    );
+    const PlusIcon = ({ size = 18 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    );
+    const Trash2Icon = ({ size = 18 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+    );
+    const CopyIcon = ({ size = 18 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+    );
+    const CheckCircle2Icon = ({ size = 18 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
+    );
+    const LayoutTemplateIcon = ({ size = 24 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M21 9H3"/><path d="M9 21V9"/></svg>
+    );
+    const SparklesIcon = ({ size = 18 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5z"/><path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z"/></svg>
+    );
+    const AlignLeftIcon = ({ size = 16 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+    );
+    const Volume2Icon = ({ size = 16 }) => (
+      <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+    );
+
+    // --- LOGIQUE PRINCIPALE DU GÉNÉRATEUR ---
+    const App = () => {
+      const [activeTab, setActiveTab] = useState('general');
+      const [copied, setCopied] = useState(false);
+      const [generatedPrompt, setGeneratedPrompt] = useState('');
+
+      // 1. Informations générales (Tout est vierge au départ)
+      const [title, setTitle] = useState("");
+      const [subtitle, setSubtitle] = useState("");
+      const [level, setLevel] = useState("");
+      const [theme, setTheme] = useState("");
+      const [customTheme, setCustomTheme] = useState("");
+
+      // 2. Apparence visuelle (Vierge au départ)
+      const [visualStylesSel, setVisualStylesSel] = useState([]);
+      const [atmosphere, setAtmosphere] = useState("");
+      const [colorPalette, setColorPalette] = useState("");
+      const [animationLevel, setAnimationLevel] = useState("");
+      const [soundEffectsSel, setSoundEffectsSel] = useState([]);
+
+      // 3. Navigation & Interaction (Vierge au départ)
+      const [navigationMode, setNavigationMode] = useState("");
+      const [showProgress, setShowProgress] = useState("");
+      const [interactionType, setInteractionType] = useState("");
+      const [revealAnimation, setRevealAnimation] = useState("");
+      const [revealSound, setRevealSound] = useState("");
+      const [exportType, setExportType] = useState("");
+
+      // 4. Blagues (Vierge au départ)
+      const [jokeInputMode, setJokeInputMode] = useState("bulk");
+      const [bulkJokesText, setBulkJokesText] = useState("");
+      const [jokes, setJokes] = useState([
+        { q: "", a: "" }
+      ]);
+
+      // 5. Styles de blagues (Vierge au départ)
+      const [jokeStyles, setJokeStyles] = useState([]);
+
+      const themes = [
+        "Rentrée scolaire", "Automne", "Halloween", "Noël", "Hiver", "Saint-Valentin", 
+        "Printemps", "Pâques", "Jour de la Terre", "Fin d'année scolaire", "Lecture", 
+        "Mathématiques", "Sciences", "Animaux", "Espace", "Sports", "Pirates", 
+        "Dragons", "Superhéros", "Fantaisie", "Humour scolaire", "Autre"
+      ];
+      
+      const visualStyles = [
+        "Cartoon jeunesse", "Illustration pédagogique", "Bande dessinée", 
+        "Semi-réaliste", "Réaliste", "Cinématographique", "Adaptation automatique selon chaque blague"
+      ];
+
+      const atmospheres = [
+        "Humoristique", "Mystère", "Aventure", "Fantaisie", "Scolaire", "Scientifique", "Sportive", "Saisonnière"
+      ];
+
+      const colorPalettes = [
+        "Automatique", "Couleurs vives", "Couleurs douces", "Couleurs saisonnières", "Personnalisée"
+      ];
+
+      const animationLevels = [
+        "Minimal", "Modéré", "Dynamique", "Très dynamique"
+      ];
+
+      const soundOptions = [
+        "Aucun", "Discrets", "Humoristiques", "Immersifs"
+      ];
+
+      const navModes = [
+        "Onglets seulement", "Boutons précédent/suivant seulement", "Onglets + boutons", "Défilement automatique"
+      ];
+
+      const interactions = [
+        "Révélation simple de la réponse", "Bouton \"Voir la réponse\"", "Bouton \"Découvrir la chute\""
+      ];
+
+      const exportTypes = [
+        "HTML interactif", "Genially", "Canva", "PowerPoint interactif"
+      ];
+
+      const levels = [
+        "1er cycle du primaire", "2e cycle du primaire", "3e cycle du primaire"
+      ];
+
+      const jokeStylesList = [
+        { id: "Question–réponse", desc: "Grande question + bouton « Voir la réponse »" },
+        { id: "Devinette humoristique", desc: "Icône indice + suspense léger" },
+        { id: "Jeu de mots", desc: "Typographie expressive, mot clé mis en évidence" },
+        { id: "Monsieur et Madame", desc: "Carte « famille » ou personnages stylisés" },
+        { id: "Toc Toc", desc: "Bulles de dialogue animées" },
+        { id: "Dialogue express", desc: "Conversation en deux bulles" },
+        { id: "Fausse définition", desc: "Présentation type dictionnaire humoristique" },
+        { id: "Mini-histoire à chute", desc: "Illustration narrative + chute révélée au clic" }
+      ];
+
+      const addJoke = () => setJokes([...jokes, { q: "", a: "" }]);
+      const removeJoke = (index) => setJokes(jokes.filter((_, i) => i !== index));
+      const updateJoke = (index, field, value) => {
+        const newJokes = [...jokes];
+        newJokes[index][field] = value;
+        setJokes(newJokes);
+      };
+
+      const toggleSelection = (item, currentList, setList) => {
+        if (currentList.includes(item)) {
+          setList(currentList.filter(i => i !== item));
+        } else {
+          setList([...currentList, item]);
+        }
+      };
+
+      const toggleJokeStyle = (id) => {
+        setJokeStyles(prev => 
+          prev.includes(id) ? prev.filter(style => style !== id) : [...prev, id]
+        );
+      };
+
+      // --- GÉNÉRATEUR DU SUPER-PROMPT OPTIMISÉ ---
+      const generatePromptText = () => {
+        const finalTheme = theme === "Autre" && customTheme.trim() !== "" ? customTheme : (theme || "(Non spécifié)");
+        
+        const stylesText = jokeStyles.length > 0 
+          ? jokeStyles.map(s => `- ${s} : ${jokeStylesList.find(x => x.id === s)?.desc}`).join('\n')
+          : '(Aucun style spécifique sélectionné - s\'adapter librement)';
+
+        const visualStylesSelText = visualStylesSel.length > 0
+          ? visualStylesSel.join(', ')
+          : '(Aucun style sélectionné spécifiquement)';
+
+        const soundEffectsSelText = soundEffectsSel.length > 0
+          ? soundEffectsSel.join(', ')
+          : '(Aucun effet sonore sélectionné spécifiquement)';
+
+        const jokesText = jokeInputMode === "bulk" 
+          ? (bulkJokesText.trim() || "(Aucune blague fournie)")
+          : jokes.map((j, i) => `Blague ${i + 1}\nQuestion : ${j.q || '(Vide)'}\nRéponse : ${j.a || '(Vide)'}\n`).join('\n');
+        
+        const prompt = `Agis en tant qu'expert sénior en développement interactif, en UX/UI design et en conception pédagogique numérique.
+
+CONSIGNE STRICTE ET NIVEAU DE QUALITÉ EXIGÉ (EDITION SCOLAIRE) :
+Ta mission est de créer une activité interactive professionnelle présentant des blagues de manière dynamique et visuellement irréprochable. Le rendu final (ergonomie, esthétisme, animations et code) DOIT impérativement atteindre le standard de qualité d'un site web pédagogique professionnel reconnu ou d'une grande maison d'édition scolaire (comme Alloprof, Éducaland, etc.). Ce n'est pas un simple exercice de code, c'est un produit fini de haute qualité, fluide et haut de gamme.
+
+Tu devez me fournir le code complet et fonctionnel pour le format d'export demandé, destiné à des élèves du primaire, en respectant rigoureusement le cahier des charges ci-dessous.
+
+=== RÈGLE D'OR ABSOLUE ET INVIOLABLE (SÉCURITÉ UX & SUSPENSE) ===
+- LES RÉPONSES (CHUTES) NE DOIVENT JAMAIS, SOUS AUCUN PRÉTEXTE, ÊTRE DÉVOILÉES OU VISIBLES AU CHARGEMENT DE LA CARTE.
+- L'état initial de chaque blague doit STRICTEMENT masquer la réponse.
+- La réponse ne doit apparaître qu'APRÈS une action volontaire et explicite de l'utilisateur (clic sur le bouton "${interactionType || 'Révéler la réponse'}"). 
+- Assure-toi qu'aucune erreur de logique, de variable d'état globale ou de classe CSS ne vienne afficher la réponse prématurément. Le suspense doit être 100% fonctionnel et étanche.
+
+=== PARAMÈTRES DE L'ACTIVITÉ ===
+- Titre : ${title || '(Sans titre)'}
+- Sous-titre : ${subtitle || '(Aucun)'}
+- Niveau scolaire : ${level || '(Non spécifié)'}
+- Thème principal : ${finalTheme}
+- Format d'export souhaité : ${exportType || '(Non spécifié)'}
+
+=== STYLES DE BLAGUES SÉLECTIONNÉS (OBLIGATION ABSOLUE D'ADAPTATION) ===
+Il est ABSOLUMENT ESSENTIEL que chaque style choisi ci-dessous figure et soit représenté activement dans l'activité générée. 
+Tu dois adapter impérativement la structure, la mise en page visuelle et la mise en scène de chaque blague pour qu'elle corresponde fidèlement et de façon optimisée à l'un de ces styles choisis :
+${stylesText}
+
+CONTRAINTE STRICTE D'ADAPTATION ET DE SÉCURITÉ :
+- Tu as l'obligation d'adapter la présentation de chaque blague selon le style sélectionné (ex: si "Toc Toc" est choisi, le dialogue doit être mis en scène sous forme de bulles animées ; si "Fausse définition" est choisi, la présenter sous la forme d'un dictionnaire interactif ; si "Devinette" est sélectionné, intégrer un bouton ou une icône d'indice avec un effet de suspense).
+- Le style choisi influence uniquement la structure et la mise en scène de la blague. Toutes les blagues doivent demeurer courtes, adaptées au primaire, inoffensives et compréhensibles pour le niveau visé.
+
+=== APPARENCE VISUELLE & AUDIO ===
+- Styles visuels des illustrations (choix multiples) : ${visualStylesSelText}
+- Ambiance générale : ${atmosphere || '(Non spécifiée)'}
+- Palette de couleurs : ${colorPalette || '(Non spécifiée)'}
+- Niveau d'animation : ${animationLevel || '(Non spécifié)'}
+- Effets sonores globaux souhaités (choix multiples) : ${soundEffectsSelText}
+
+=== NAVIGATION & INTERACTION ===
+- Mode de navigation : ${navigationMode || '(Non spécifié)'}
+- Afficher l'indicateur de progression : ${showProgress || '(Non spécifié)'}
+- Type d'interaction pour la révélation : ${interactionType || '(Non spécifié)'}
+- Animation lors de la révélation : ${revealAnimation === 'Oui' ? 'Oui, animation humoristique' : 'Non'}
+- Effet sonore lors de la révélation : ${revealSound === 'Oui' ? 'Oui' : 'Non'}
+
+=== CONTENU (LES BLAGUES) ===
+${jokeInputMode === 'structured' ? `Nombre total de blagues saisies : ${jokes.length}\n` : ''}
+${jokesText}
+
+=== CAHIER DES CHARGES STRICT ===
+
+1. PRÉSENTATION GÉNÉRALE
+- L'activité doit refléter les standards d'une maison d'édition pédagogique : UI/UX impeccable, finitions professionnelles, design engageant.
+- Une seule blague affichée à la fois.
+- Affichage conçu pour le plein écran (ratio 16:9 de préférence).
+- Présence d'une grande image principale illustrant la blague.
+- Typographie très lisible, adaptée aux élèves du primaire (ex: police sans serif, taille généreuse).
+- Interface adaptée à une projection en classe (fort contraste, éléments interactifs évidents).
+
+2. POUR CHAQUE BLAGUE
+- L'affichage se fait sous forme de carte interactive indépendante.
+- L'illustration doit être générée/intégrée automatiquement selon le contenu de la blague, tout en gardant une cohérence stylistique globale.
+- Image professionnelle de haute qualité (style défini plus haut).
+- La réponse doit être strictement cachée au départ (voir RÈGLE D'OR ci-dessus).
+- La réponse n'est révélée qu'après l'interaction de l'utilisateur (clic sur le bouton défini).
+- Une animation fluide et un effet humoristique léger doivent accompagner la révélation.
+
+3. NAVIGATION
+Le système de navigation doit inclure selon la sélection :
+- Onglets numérotés permanents.
+- Bouton "Précédente" et Bouton "Suivante".
+- Un indicateur de progression (ex: "Blague 4 sur 10").
+- Une transition fluide (fade, slide, etc.) entre les différentes cartes.
+
+4. CRITÈRES VISUELS DES ILLUSTRATIONS
+Les images intégrées ou générées doivent :
+- Être professionnelles et adaptées au primaire.
+- Être expressives et posséder une composition soignée avec un éclairage réaliste.
+- Éviter les clichés répétitifs et ressembler à du matériel pédagogique haut de gamme.
+
+5. EXPÉRIENCE UTILISATEUR (UX)
+- Chargement rapide, aucune fenêtre ou popup inutile.
+- Interface ultra-intuitive pour une utilisation simple devant une classe.
+- Compatibilité avec un Tableau Numérique Interactif (TNI / TBI) : zones de clics larges.
+
+=== STRUCTURE D'AFFICHAGE SOUHAITÉE (WIRE FRAME) ===
+Le layout final doit refléter exactement cette structure :
+
+┌────────────────────────────────────┐
+│ Titre de l'activité                │
+├────────────────────────────────────┤
+│                                    │
+│        IMAGE PRINCIPALE            │
+│                                    │
+├────────────────────────────────────┤
+│               BLAGUE               │
+│                                    │
+│       [ Révéler la réponse ]       │
+│                                    │
+├────────────────────────────────────┤
+│ ◀ Précédente       4/10   Suivante ▶│
+├────────────────────────────────────┤
+│ 1 │ 2 │ 3 │ 4 │ 5 │ 6 │ 7 │ 8 │... │
+└────────────────────────────────────┘
+
+=== RÉSULTAT ATTENDU ===
+L'activité finale devra être livrée sous forme d'une solution complète (${exportType || 'HTML interactif'}) comprenant toutes les cartes, les réponses cachées, les emplacements pour images, les animations, les effets et la navigation, prête à être utilisée en classe. Produis le code ou le plan d'intégration détaillé permettant ce résultat.`;
+
+        setGeneratedPrompt(prompt);
+        
+        setTimeout(() => {
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }, 100);
+      };
+
+      const copyToClipboard = async () => {
+        try {
+          if (navigator?.clipboard?.writeText) {
+            await navigator.clipboard.writeText(generatedPrompt);
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          } else {
+            fallbackCopyTextToClipboard(generatedPrompt);
+          }
+        } catch (err) {
+          console.warn("L'API Presse-papiers a échoué, tentative de secours...", err);
+          fallbackCopyTextToClipboard(generatedPrompt);
+        }
+      };
+
+      const fallbackCopyTextToClipboard = (text) => {
+        try {
+          const textArea = document.createElement("textarea");
+          textArea.value = text;
+          textArea.style.top = "0";
+          textArea.style.left = "0";
+          textArea.style.position = "fixed";
+
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+
+          const successful = document.execCommand('copy');
+          if (successful) {
+            setCopied(true);
+            setTimeout(() => setCopied(false), 2000);
+          }
+          document.body.removeChild(textArea);
+        } catch (err) {
+          console.error("Échec de la copie de secours.", err);
+        }
+      };
+
+      const TabButton = ({ id, icon: Icon, label }) => (
+        <button
+          type="button"
+          onClick={() => setActiveTab(id)}
+          className={`flex items-center gap-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 whitespace-nowrap ${
+            activeTab === id 
+              ? 'border-blue-600 text-blue-600 bg-blue-50/50' 
+              : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+          }`}
+        >
+          <Icon size={18} />
+          <span>{label}</span>
+        </button>
+      );
+
+      return (
+        <div className="min-h-screen bg-gray-100 text-gray-800 font-sans pb-12">
+          {/* En-tête */}
+          <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
+            <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-blue-600 text-white p-2 rounded-lg">
+                  <LayoutTemplateIcon size={24} />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900">Générateur de Requêtes</h1>
+                  <p className="text-xs text-gray-500 font-medium">Activité interactive de blagues pour le primaire</p>
+                </div>
+              </div>
+              <button 
+                type="button"
+                onClick={generatePromptText}
+                className="hidden sm:flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md font-medium transition-colors shadow-sm"
+              >
+                <PlayIcon size={18} fill="currentColor" />
+                Générer la requête
+              </button>
+            </div>
+          </header>
+
+          <main className="max-w-5xl mx-auto px-4 mt-6">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+              
+              {/* Onglets de navigation */}
+              <div className="flex overflow-x-auto border-b border-gray-200 hide-scrollbar bg-white">
+                <TabButton id="general" icon={SettingsIcon} label="Général" />
+                <TabButton id="styles" icon={SparklesIcon} label="Styles de blagues" />
+                <TabButton id="visual" icon={ImageIcon} label="Visuel & Audio" />
+                <TabButton id="interaction" icon={MousePointerClickIcon} label="Interaction & Navigation" />
+                <TabButton id="jokes" icon={MessageSquareIcon} label={jokeInputMode === 'bulk' ? "Blagues (Vrac)" : `Blagues (${jokes.length})`} />
+              </div>
+
+              {/* Contenu des onglets */}
+              <div className="p-6 sm:p-8 bg-gray-50/30">
+                
+                {/* ONGLET 1: GÉNÉRAL (VIERGE AU DÉMARRAGE) */}
+                {activeTab === 'general' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Informations générales</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Titre de l'activité</label>
+                        <input 
+                          type="text" 
+                          value={title} 
+                          onChange={(e) => setTitle(e.target.value)} 
+                          className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white" 
+                          placeholder="Saisissez un titre..." 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Sous-titre (facultatif)</label>
+                        <input 
+                          type="text" 
+                          value={subtitle} 
+                          onChange={(e) => setSubtitle(e.target.value)} 
+                          className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white" 
+                          placeholder="Ex: Spécial animaux" 
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Niveau scolaire</label>
+                        <select 
+                          value={level} 
+                          onChange={(e) => setLevel(e.target.value)} 
+                          className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                        >
+                          <option value="">-- Sélectionner un niveau scolaire --</option>
+                          {levels.map(l => <option key={l} value={l}>{l}</option>)}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Thème principal</label>
+                        <select 
+                          value={theme} 
+                          onChange={(e) => setTheme(e.target.value)} 
+                          className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                        >
+                          <option value="">-- Sélectionner un thème --</option>
+                          {themes.map(t => <option key={t} value={t}>{t}</option>)}
+                        </select>
+                        {theme === "Autre" && (
+                          <input 
+                            type="text" 
+                            value={customTheme} 
+                            onChange={(e) => setCustomTheme(e.target.value)} 
+                            className="w-full mt-2 p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white animate-fadeIn" 
+                            placeholder="Écrivez le thème de votre choix..." 
+                          />
+                        )}
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700 font-semibold text-blue-800">Format d'export souhaité par l'IA cible</label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
+                          {exportTypes.map(type => (
+                            <div key={type} 
+                              onClick={() => setExportType(type)}
+                              className={`cursor-pointer border rounded-md p-3 text-center text-sm transition-all ${exportType === type ? 'bg-blue-50 border-blue-500 text-blue-700 font-medium shadow-sm' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'}`}
+                            >
+                              {type}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ONGLET STYLES DE BLAGUES (VIERGE AU DÉMARRAGE) */}
+                {activeTab === 'styles' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="border-b pb-2">
+                      <h2 className="text-lg font-semibold text-gray-800">Styles de blagues recommandés</h2>
+                      <p className="text-sm text-gray-500 mt-1">Sélectionnez un ou plusieurs styles. Ils piloteront et adapteront la mise en scène de vos blagues de façon unique dans le rendu final.</p>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {jokeStylesList.map((style) => (
+                        <label 
+                          key={style.id} 
+                          className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
+                            jokeStyles.includes(style.id) 
+                              ? 'bg-blue-50 border-blue-400 shadow-sm' 
+                              : 'bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                          }`}
+                        >
+                          <div className="mt-0.5">
+                            <input 
+                              type="checkbox" 
+                              checked={jokeStyles.includes(style.id)} 
+                              onChange={() => toggleJokeStyle(style.id)}
+                              className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                            />
+                          </div>
+                          <div>
+                            <span className={`block font-medium ${jokeStyles.includes(style.id) ? 'text-blue-800' : 'text-gray-700'}`}>
+                              {style.id}
+                            </span>
+                            <span className="block text-xs text-gray-500 mt-1">
+                              {style.desc}
+                            </span>
+                          </div>
+                        </label>
+                      ))}
+                    </div>
+                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-md mt-4">
+                      <p className="text-sm text-yellow-800 font-medium">Contrainte d'adaptation et de sécurité intégrée automatiquement :</p>
+                      <p className="text-sm text-yellow-700 mt-1">
+                        « Le style choisi influence uniquement la structure et la mise en scène de la blague. Toutes les blagues doivent demeurer courtes, adaptées au primaire, inoffensives et compréhensibles pour le niveau visé. De plus, chaque style sélectionné est configuré pour adapter impérativement le visuel et les interactions de la blague correspondante. »
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* ONGLET 2: VISUEL & AUDIO (SELECTION MULTIPLE ET VIERGE) */}
+                {activeTab === 'visual' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Apparence visuelle & Sonore</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      
+                      {/* Style visuel : MULTIPLE CHOIX */}
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="block text-sm font-medium text-gray-700">Styles visuels des illustrations <span className="text-xs text-blue-600 font-normal">(Sélection multiple possible)</span></label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">
+                          {visualStyles.map(v => {
+                            const isSelected = visualStylesSel.includes(v);
+                            return (
+                              <div 
+                                key={v}
+                                onClick={() => toggleSelection(v, visualStylesSel, setVisualStylesSel)}
+                                className={`cursor-pointer border rounded-md p-3 text-sm flex items-center gap-3 transition-all ${isSelected ? 'bg-blue-50 border-blue-500 text-blue-700 font-medium shadow-sm' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'}`}
+                              >
+                                <input 
+                                  type="checkbox" 
+                                  checked={isSelected} 
+                                  onChange={() => {}} 
+                                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" 
+                                />
+                                <span>{v}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Ambiance générale</label>
+                        <select value={atmosphere} onChange={(e) => setAtmosphere(e.target.value)} className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                          <option value="">-- Choisir une ambiance --</option>
+                          {atmospheres.map(a => <option key={a} value={a}>{a}</option>)}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Palette de couleurs</label>
+                        <select value={colorPalette} onChange={(e) => setColorPalette(e.target.value)} className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                          <option value="">-- Choisir une palette --</option>
+                          {colorPalettes.map(c => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-gray-700">Niveau d'animation global</label>
+                        <select value={animationLevel} onChange={(e) => setAnimationLevel(e.target.value)} className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                          <option value="">-- Choisir le niveau d'animation --</option>
+                          {animationLevels.map(a => <option key={a} value={a}>{a}</option>)}
+                        </select>
+                      </div>
+
+                      {/* Effets sonores : MULTIPLE CHOIX */}
+                      <div className="space-y-2 md:col-span-2 pt-2 border-t border-gray-200">
+                        <label className="block text-sm font-medium text-gray-700 flex items-center gap-1.5">
+                          <Volume2Icon size={16} /> Effets sonores souhaités <span className="text-xs text-blue-600 font-normal">(Sélection multiple possible)</span>
+                        </label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
+                          {soundOptions.map(sound => {
+                            const isSelected = soundEffectsSel.includes(sound);
+                            return (
+                              <div key={sound} 
+                                onClick={() => toggleSelection(sound, soundEffectsSel, setSoundEffectsSel)}
+                                className={`cursor-pointer border rounded-md p-3 text-center text-sm flex items-center justify-center gap-2 transition-all ${isSelected ? 'bg-blue-50 border-blue-500 text-blue-700 font-medium shadow-sm' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'}`}
+                              >
+                                <input 
+                                  type="checkbox" 
+                                  checked={isSelected} 
+                                  onChange={() => {}} 
+                                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" 
+                                />
+                                <span>{sound}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* ONGLET 3: INTERACTION & NAVIGATION (VIERGE AU DÉMARRAGE) */}
+                {activeTab === 'interaction' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Navigation et Interaction</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      
+                      {/* Section Navigation */}
+                      <div className="space-y-5 bg-white p-5 rounded-lg border border-gray-200">
+                        <h3 className="font-medium text-blue-700 flex items-center gap-2">
+                          <LayoutTemplateIcon size={18}/> Paramètres de navigation
+                        </h3>
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700">Mode de navigation</label>
+                          <select value={navigationMode} onChange={(e) => setNavigationMode(e.target.value)} className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                            <option value="">-- Choisir un mode de navigation --</option>
+                            {navModes.map(n => <option key={n} value={n}>{n}</option>)}
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700">Afficher l'indicateur de progression</label>
+                          <div className="flex gap-4 mt-1">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="radio" name="prog" value="Oui" checked={showProgress === "Oui"} onChange={() => setShowProgress("Oui")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
+                              <span className="text-sm">Oui</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="radio" name="prog" value="Non" checked={showProgress === "Non"} onChange={() => setShowProgress("Non")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
+                              <span className="text-sm">Non</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Section Révélation */}
+                      <div className="space-y-5 bg-white p-5 rounded-lg border border-gray-200">
+                        <h3 className="font-medium text-blue-700 flex items-center gap-2">
+                          <MousePointerClickIcon size={18}/> Révélation de la réponse
+                        </h3>
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700">Type d'interaction (Bouton)</label>
+                          <select value={interactionType} onChange={(e) => setInteractionType(e.target.value)} className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                            <option value="">-- Choisir le type d'interaction --</option>
+                            {interactions.map(i => <option key={i} value={i}>{i}</option>)}
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700">Animation humoristique lors de la révélation</label>
+                          <div className="flex gap-4 mt-1">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="radio" name="animRev" value="Oui" checked={revealAnimation === "Oui"} onChange={() => setRevealAnimation("Oui")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
+                              <span className="text-sm">Oui</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="radio" name="animRev" value="Non" checked={revealAnimation === "Non"} onChange={() => setRevealAnimation("Non")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
+                              <span className="text-sm">Non</span>
+                            </label>
+                          </div>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="block text-sm font-medium text-gray-700">Effet sonore spécifique lors de la révélation</label>
+                          <div className="flex gap-4 mt-1">
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="radio" name="sndRev" value="Oui" checked={revealSound === "Oui"} onChange={() => setRevealSound("Oui")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
+                              <span className="text-sm">Oui</span>
+                            </label>
+                            <label className="flex items-center gap-2 cursor-pointer">
+                              <input type="radio" name="sndRev" value="Non" checked={revealSound === "Non"} onChange={() => setRevealSound("Non")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
+                              <span className="text-sm">Non</span>
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
+                {/* ONGLET 4: BLAGUES (VIERGES SANS CONTENU PRÉ-REMPLI) */}
+                {activeTab === 'jokes' && (
+                  <div className="space-y-6 animate-fadeIn">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b pb-4 gap-4">
+                      <div>
+                        <h2 className="text-lg font-semibold text-gray-800">Contenu : Les Blagues</h2>
+                        <p className="text-sm text-gray-500">Ajoutez vos propres blagues ci-dessous (laissez parler votre créativité !).</p>
+                      </div>
+                      
+                      <div className="flex bg-gray-200 p-1 rounded-lg">
+                        <button 
+                          type="button"
+                          onClick={() => setJokeInputMode('bulk')}
+                          className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${jokeInputMode === 'bulk' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-800'}`}
+                        >
+                          <AlignLeftIcon size={16} /> Coller en vrac
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => setJokeInputMode('structured')}
+                          className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${jokeInputMode === 'structured' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-800'}`}
+                        >
+                          <MessageSquareIcon size={16} /> Saisie guidée
+                        </button>
+                      </div>
+                    </div>
+                    
+                    {jokeInputMode === 'bulk' ? (
+                      <div className="space-y-3">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Collez toutes vos blagues ici (grand encadré vierge prêt pour l'intégration en bloc) :
+                        </label>
+                        <textarea 
+                          value={bulkJokesText}
+                          onChange={(e) => setBulkJokesText(e.target.value)}
+                          className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[300px] resize-y font-mono text-sm bg-white"
+                          placeholder="Collez ou tapez vos blagues en toute liberté...&#10;Exemple :&#10;1. Toc toc toc ! Qui est là ? C'est le livre. Quel livre ? Le livre de mathématiques qui a trop de problèmes !&#10;2. Quel est le comble pour un poisson ? Avoir peur de l'eau."
+                        />
+                      </div>
+                    ) : (
+                      <>
+                        <div className="space-y-4">
+                          {jokes.map((joke, index) => (
+                            <div key={index} className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm relative group transition-all hover:border-blue-300">
+                              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <button 
+                                  type="button"
+                                  onClick={() => removeJoke(index)}
+                                  className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded-md transition-colors"
+                                  title="Supprimer cette blague"
+                                  disabled={jokes.length === 1}
+                                >
+                                  <Trash2Icon size={18} />
+                                </button>
+                              </div>
+                              
+                              <div className="flex items-center gap-2 mb-4">
+                                <span className="flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-bold">
+                                  {index + 1}
+                                </span>
+                                <h4 className="font-medium text-gray-700">Blague {index + 1}</h4>
+                              </div>
+
+                              <div className="space-y-4 pl-8">
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-600 mb-1">Question (La mise en situation) :</label>
+                                  <input 
+                                    type="text" 
+                                    value={joke.q} 
+                                    onChange={(e) => updateJoke(index, 'q', e.target.value)} 
+                                    className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white" 
+                                    placeholder="Saisissez la question..."
+                                  />
+                                </div>
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-600 mb-1">Réponse (La chute) :</label>
+                                  <input 
+                                    type="text" 
+                                    value={joke.a} 
+                                    onChange={(e) => updateJoke(index, 'a', e.target.value)} 
+                                    className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-green-50/30" 
+                                    placeholder="Saisissez la chute..."
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="pt-2">
+                          <button 
+                            type="button"
+                            onClick={addJoke}
+                            className="flex items-center justify-center w-full gap-2 py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-colors font-medium"
+                          >
+                            <PlusIcon size={20} />
+                            Ajouter une nouvelle blague
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+
+                {/* Bouton générer principal */}
+                <div className="mt-8 pt-6 border-t border-gray-200 flex justify-center">
+                  <button 
+                    type="button"
+                    onClick={generatePromptText}
+                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3.5 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 w-full sm:w-auto"
+                  >
+                    <PlayIcon size={20} fill="currentColor" />
+                    Générer la requête optimisée
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            {/* RÉSULTAT : LA REQUÊTE GÉNÉRÉE */}
+            {generatedPrompt && (
+              <div className="mt-8 mb-12 bg-gray-900 rounded-xl shadow-xl overflow-hidden border border-gray-800 animate-slideUp">
+                <div className="bg-gray-800 px-6 py-4 flex items-center justify-between border-b border-gray-700">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle2Icon className="text-green-400" size={24} />
+                    <h3 className="text-lg font-semibold text-white">Requête prête !</h3>
+                  </div>
+                  <button 
+                    type="button"
+                    onClick={copyToClipboard}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-colors ${
+                      copied ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-white hover:bg-white/20'
+                    }`}
+                  >
+                    {copied ? <><CheckCircle2Icon size={16} /> Copié !</> : <><CopyIcon size={16} /> Copier le texte</>}
+                  </button>
+                </div>
+                <div className="p-6">
+                  <p className="text-gray-400 text-sm mb-4 italic">
+                    Copiez le texte ci-dessous et collez-le dans l'IA cible (ChatGPT, Claude, Gemini, etc.) pour générer votre activité interactive de blagues.
+                  </p>
+                  <div className="bg-gray-950 rounded-lg p-5 border border-gray-800 overflow-x-auto relative">
+                    <pre className="text-gray-300 font-mono text-sm whitespace-pre-wrap leading-relaxed">
+                      {generatedPrompt}
+                    </pre>
+                  </div>
+                  <div className="mt-6 flex justify-center">
+                    <button 
+                      type="button"
+                      onClick={copyToClipboard}
+                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                    >
+                      <CopyIcon size={18} /> {copied ? 'Texte copié dans le presse-papier !' : 'Copier la requête complète'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </main>
+        </div>
+      );
+    };
+
+    // Render principal
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
