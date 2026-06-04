@@ -15,13 +15,13 @@
   <style>
     .hide-scrollbar::-webkit-scrollbar { display: none; }
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-slideUp { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fadeIn { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-slideUp { animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
   </style>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans pb-12">
+<body class="bg-slate-50 text-slate-800 font-sans pb-16 antialiased">
 
   <div id="root"></div>
 
@@ -30,43 +30,43 @@
     const { useState } = React;
 
     // --- COMPOSANTS D'ICÔNES SVG INTERNES (Pour éliminer les dépendances externes lourdes) ---
-    const SettingsIcon = ({ size = 18 }) => (
+    const SettingsIcon = ({ size = 20 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
     );
-    const ImageIcon = ({ size = 18 }) => (
+    const ImageIcon = ({ size = 20 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
     );
-    const MousePointerClickIcon = ({ size = 18 }) => (
+    const MousePointerClickIcon = ({ size = 20 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 4.1 12 6s-1.5-1.5-3-1.5C6 4.5 5 7 5 10c0 4 2.5 6 3 9l.5 3.5h7L16 19c.5-3 3-5 3-9 0-3-1-5.5-4-5.9z"/><path d="m12 6 .5-4M9 4.5 7 1.5M15 4.5l2-3"/></svg>
     );
-    const MessageSquareIcon = ({ size = 18 }) => (
+    const MessageSquareIcon = ({ size = 20 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
     );
-    const PlayIcon = ({ size = 18, fill = "none" }) => (
+    const PlayIcon = ({ size = 20, fill = "none" }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill={fill} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
     );
-    const PlusIcon = ({ size = 18 }) => (
+    const PlusIcon = ({ size = 20 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
     );
-    const Trash2Icon = ({ size = 18 }) => (
+    const Trash2Icon = ({ size = 20 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
     );
-    const CopyIcon = ({ size = 18 }) => (
+    const CopyIcon = ({ size = 20 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
     );
-    const CheckCircle2Icon = ({ size = 18 }) => (
+    const CheckCircle2Icon = ({ size = 20 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>
     );
     const LayoutTemplateIcon = ({ size = 24 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M21 9H3"/><path d="M9 21V9"/></svg>
     );
-    const SparklesIcon = ({ size = 18 }) => (
+    const SparklesIcon = ({ size = 20 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="m5 3 1 2.5L8.5 6 6 7 5 9.5 4 7 1.5 6 4 5.5z"/><path d="m19 17 1 2.5 2.5.5-2.5 1-1 2.5-1-2.5-2.5-1 2.5-1z"/></svg>
     );
-    const AlignLeftIcon = ({ size = 16 }) => (
+    const AlignLeftIcon = ({ size = 18 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
     );
-    const Volume2Icon = ({ size = 16 }) => (
+    const Volume2Icon = ({ size = 18 }) => (
       <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
     );
 
@@ -271,7 +271,7 @@ ${jokesText}
 - Une animation fluide et un effet humoristique léger doivent accompagner la révélation.
 
 3. NAVIGATION
-Le système de navigation doit inclure selon la sélection :
+Le système de navigation doit include selon la sélection :
 - Onglets numérotés permanents.
 - Bouton "Précédente" et Bouton "Suivante".
 - Un indicateur de progression (ex: "Blague 4 sur 10").
@@ -360,99 +360,101 @@ L'activité finale devra être livrée sous forme d'une solution complète (${ex
         <button
           type="button"
           onClick={() => setActiveTab(id)}
-          className={`flex items-center gap-2 px-4 py-3 font-medium text-sm transition-colors border-b-2 whitespace-nowrap ${
+          className={`flex items-center gap-3 px-5 py-4 font-bold text-base transition-all rounded-xl border whitespace-nowrap hover:scale-[1.02] active:scale-[0.98] ${
             activeTab === id 
-              ? 'border-blue-600 text-blue-600 bg-blue-50/50' 
-              : 'border-transparent text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+              ? 'border-blue-600 bg-blue-600 text-white shadow-lg shadow-blue-200' 
+              : 'border-slate-200 bg-white text-slate-600 hover:text-slate-800 hover:bg-slate-50 hover:border-slate-300'
           }`}
         >
-          <Icon size={18} />
+          <Icon size={20} />
           <span>{label}</span>
         </button>
       );
 
       return (
-        <div className="min-h-screen bg-gray-100 text-gray-800 font-sans pb-12">
+        <div className="min-h-screen bg-slate-50 text-slate-800 font-sans pb-16 antialiased">
           {/* En-tête */}
-          <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-10">
-            <div className="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="bg-blue-600 text-white p-2 rounded-lg">
-                  <LayoutTemplateIcon size={24} />
+          <header className="bg-white shadow-md border-b border-slate-200 sticky top-0 z-10">
+            <div className="max-w-5xl mx-auto px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <div className="bg-gradient-to-tr from-blue-600 to-indigo-600 text-white p-3 rounded-2xl shadow-md shadow-blue-100">
+                  <LayoutTemplateIcon size={28} />
                 </div>
-                <div>
-                  <h1 className="text-xl font-bold text-gray-900">Générateur de Requêtes</h1>
-                  <p className="text-xs text-gray-500 font-medium">Activité interactive de blagues pour le primaire</p>
+                <div className="text-center sm:text-left">
+                  <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 sm:text-3xl">Générateur de Requêtes</h1>
+                  <p className="text-sm sm:text-base text-slate-500 font-medium mt-0.5">Créez une activité de blagues de niveau d'édition scolaire</p>
                 </div>
               </div>
               <button 
                 type="button"
                 onClick={generatePromptText}
-                className="hidden sm:flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-md font-medium transition-colors shadow-sm"
+                className="flex items-center gap-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3.5 rounded-xl font-bold text-base transition-all hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-blue-100"
               >
-                <PlayIcon size={18} fill="currentColor" />
+                <PlayIcon size={20} fill="currentColor" />
                 Générer la requête
               </button>
             </div>
           </header>
 
-          <main className="max-w-5xl mx-auto px-4 mt-6">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <main className="max-w-5xl mx-auto px-6 mt-10">
+            <div className="bg-white rounded-3xl shadow-xl border border-slate-200/80 overflow-hidden">
               
-              {/* Onglets de navigation */}
-              <div className="flex overflow-x-auto border-b border-gray-200 hide-scrollbar bg-white">
-                <TabButton id="general" icon={SettingsIcon} label="Général" />
-                <TabButton id="styles" icon={SparklesIcon} label="Styles de blagues" />
-                <TabButton id="visual" icon={ImageIcon} label="Visuel & Audio" />
-                <TabButton id="interaction" icon={MousePointerClickIcon} label="Interaction & Navigation" />
-                <TabButton id="jokes" icon={MessageSquareIcon} label={jokeInputMode === 'bulk' ? "Blagues (Vrac)" : `Blagues (${jokes.length})`} />
+              {/* Onglets de navigation - Design pills modernes */}
+              <div className="p-4 bg-slate-100/60 border-b border-slate-200">
+                <div className="flex gap-2.5 overflow-x-auto hide-scrollbar pb-1">
+                  <TabButton id="general" icon={SettingsIcon} label="Général" />
+                  <TabButton id="styles" icon={SparklesIcon} label="Styles de blagues" />
+                  <TabButton id="visual" icon={ImageIcon} label="Visuel & Audio" />
+                  <TabButton id="interaction" icon={MousePointerClickIcon} label="Interaction" />
+                  <TabButton id="jokes" icon={MessageSquareIcon} label={jokeInputMode === 'bulk' ? "Blagues (Vrac)" : `Blagues (${jokes.length})`} />
+                </div>
               </div>
 
               {/* Contenu des onglets */}
-              <div className="p-6 sm:p-8 bg-gray-50/30">
+              <div className="p-8 sm:p-10 bg-white">
                 
-                {/* ONGLET 1: GÉNÉRAL (VIERGE AU DÉMARRAGE) */}
+                {/* ONGLET 1: GÉNÉRAL (VIERGE AU DÉMARRAGE - TEXTES ET DROPDOWNS PLUS GRANDS) */}
                 {activeTab === 'general' && (
-                  <div className="space-y-6 animate-fadeIn">
-                    <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Informations générales</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-8 animate-fadeIn">
+                    <h2 className="text-xl font-extrabold text-slate-950 border-b border-slate-100 pb-3">Informations générales</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Titre de l'activité</label>
+                        <label className="block text-base font-bold text-slate-700">Titre de l'activité</label>
                         <input 
                           type="text" 
                           value={title} 
                           onChange={(e) => setTitle(e.target.value)} 
-                          className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white" 
+                          className="w-full p-4 text-lg border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-white shadow-sm transition-all placeholder:text-slate-400" 
                           placeholder="Saisissez un titre..." 
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Sous-titre (facultatif)</label>
+                        <label className="block text-base font-bold text-slate-700">Sous-titre (facultatif)</label>
                         <input 
                           type="text" 
                           value={subtitle} 
                           onChange={(e) => setSubtitle(e.target.value)} 
-                          className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white" 
+                          className="w-full p-4 text-lg border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-white shadow-sm transition-all placeholder:text-slate-400" 
                           placeholder="Ex: Spécial animaux" 
                         />
                       </div>
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Niveau scolaire</label>
+                        <label className="block text-base font-bold text-slate-700">Niveau scolaire</label>
                         <select 
                           value={level} 
                           onChange={(e) => setLevel(e.target.value)} 
-                          className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                          className="w-full p-4 text-lg border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-white shadow-sm transition-all"
                         >
                           <option value="">-- Sélectionner un niveau scolaire --</option>
                           {levels.map(l => <option key={l} value={l}>{l}</option>)}
                         </select>
                       </div>
                       <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Thème principal</label>
+                        <label className="block text-base font-bold text-slate-700">Thème principal</label>
                         <select 
                           value={theme} 
                           onChange={(e) => setTheme(e.target.value)} 
-                          className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                          className="w-full p-4 text-lg border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-white shadow-sm transition-all"
                         >
                           <option value="">-- Sélectionner un thème --</option>
                           {themes.map(t => <option key={t} value={t}>{t}</option>)}
@@ -462,18 +464,18 @@ L'activité finale devra être livrée sous forme d'une solution complète (${ex
                             type="text" 
                             value={customTheme} 
                             onChange={(e) => setCustomTheme(e.target.value)} 
-                            className="w-full mt-2 p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white animate-fadeIn" 
+                            className="w-full mt-3 p-4 text-lg border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-white shadow-sm animate-fadeIn placeholder:text-slate-400" 
                             placeholder="Écrivez le thème de votre choix..." 
                           />
                         )}
                       </div>
-                      <div className="space-y-2 md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700 font-semibold text-blue-800">Format d'export souhaité par l'IA cible</label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
+                      <div className="space-y-3 md:col-span-2 pt-4">
+                        <label className="block text-base font-extrabold text-blue-800 tracking-wide uppercase">Format d'export souhaité par l'IA cible</label>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
                           {exportTypes.map(type => (
                             <div key={type} 
                               onClick={() => setExportType(type)}
-                              className={`cursor-pointer border rounded-md p-3 text-center text-sm transition-all ${exportType === type ? 'bg-blue-50 border-blue-500 text-blue-700 font-medium shadow-sm' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'}`}
+                              className={`cursor-pointer border rounded-2xl p-4 text-center text-base font-bold transition-all hover:scale-[1.03] active:scale-[0.97] flex items-center justify-center min-h-[64px] ${exportType === type ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'}`}
                             >
                               {type}
                             </div>
@@ -484,122 +486,127 @@ L'activité finale devra être livrée sous forme d'une solution complète (${ex
                   </div>
                 )}
 
-                {/* ONGLET STYLES DE BLAGUES (VIERGE AU DÉMARRAGE) */}
+                {/* ONGLET STYLES DE BLAGUES (VIERGE AU DÉMARRAGE - DESIGN CARTES) */}
                 {activeTab === 'styles' && (
-                  <div className="space-y-6 animate-fadeIn">
-                    <div className="border-b pb-2">
-                      <h2 className="text-lg font-semibold text-gray-800">Styles de blagues recommandés</h2>
-                      <p className="text-sm text-gray-500 mt-1">Sélectionnez un ou plusieurs styles. Ils piloteront et adapteront la mise en scène de vos blagues de façon unique dans le rendu final.</p>
+                  <div className="space-y-8 animate-fadeIn">
+                    <div className="border-b border-slate-100 pb-3">
+                      <h2 className="text-xl font-extrabold text-slate-950">Styles de blagues recommandés</h2>
+                      <p className="text-sm sm:text-base text-slate-500 mt-1">Sélectionnez un ou plusieurs styles. Ils piloteront et adapteront la mise en scène de vos blagues de façon unique dans le rendu final.</p>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {jokeStylesList.map((style) => (
-                        <label 
-                          key={style.id} 
-                          className={`flex items-start gap-3 p-4 rounded-lg border cursor-pointer transition-all ${
-                            jokeStyles.includes(style.id) 
-                              ? 'bg-blue-50 border-blue-400 shadow-sm' 
-                              : 'bg-white border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                          }`}
-                        >
-                          <div className="mt-0.5">
-                            <input 
-                              type="checkbox" 
-                              checked={jokeStyles.includes(style.id)} 
-                              onChange={() => toggleJokeStyle(style.id)}
-                              className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                            />
-                          </div>
-                          <div>
-                            <span className={`block font-medium ${jokeStyles.includes(style.id) ? 'text-blue-800' : 'text-gray-700'}`}>
-                              {style.id}
-                            </span>
-                            <span className="block text-xs text-gray-500 mt-1">
-                              {style.desc}
-                            </span>
-                          </div>
-                        </label>
-                      ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                      {jokeStylesList.map((style) => {
+                        const isSelected = jokeStyles.includes(style.id);
+                        return (
+                          <label 
+                            key={style.id} 
+                            className={`flex items-start gap-4 p-5 rounded-2xl border cursor-pointer transition-all hover:scale-[1.01] ${
+                              isSelected 
+                                ? 'bg-blue-50/60 border-blue-500 shadow-md shadow-blue-50' 
+                                : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                            }`}
+                          >
+                            <div className="mt-1">
+                              <input 
+                                type="checkbox" 
+                                checked={isSelected} 
+                                onChange={() => toggleJokeStyle(style.id)}
+                                className="w-6 h-6 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-all cursor-pointer"
+                              />
+                            </div>
+                            <div>
+                              <span className={`block text-lg font-bold ${isSelected ? 'text-blue-900' : 'text-slate-800'}`}>
+                                {style.id}
+                              </span>
+                              <span className="block text-sm text-slate-500 mt-1.5 leading-relaxed">
+                                {style.desc}
+                              </span>
+                            </div>
+                          </label>
+                        );
+                      })}
                     </div>
-                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-md mt-4">
-                      <p className="text-sm text-yellow-800 font-medium">Contrainte d'adaptation et de sécurité intégrée automatiquement :</p>
-                      <p className="text-sm text-yellow-700 mt-1">
+                    <div className="bg-amber-50 border-l-4 border-amber-500 p-5 rounded-r-2xl mt-6 shadow-sm">
+                      <p className="text-base font-extrabold text-amber-900 flex items-center gap-2">⚠️ Contrainte d'adaptation et de sécurité intégrée automatiquement :</p>
+                      <p className="text-sm sm:text-base text-amber-800 mt-2 leading-relaxed font-medium">
                         « Le style choisi influence uniquement la structure et la mise en scène de la blague. Toutes les blagues doivent demeurer courtes, adaptées au primaire, inoffensives et compréhensibles pour le niveau visé. De plus, chaque style sélectionné est configuré pour adapter impérativement le visuel et les interactions de la blague correspondante. »
                       </p>
                     </div>
                   </div>
                 )}
 
-                {/* ONGLET 2: VISUEL & AUDIO (SELECTION MULTIPLE ET VIERGE) */}
+                {/* ONGLET 2: VISUEL & AUDIO (SELECTION MULTIPLE - DESIGN MODERNISÉ) */}
                 {activeTab === 'visual' && (
-                  <div className="space-y-6 animate-fadeIn">
-                    <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Apparence visuelle & Sonore</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-8 animate-fadeIn">
+                    <h2 className="text-xl font-extrabold text-slate-950 border-b border-slate-100 pb-3">Apparence visuelle & Sonore</h2>
+                    <div className="space-y-8">
                       
                       {/* Style visuel : MULTIPLE CHOIX */}
-                      <div className="space-y-2 md:col-span-2">
-                        <label className="block text-sm font-medium text-gray-700">Styles visuels des illustrations <span className="text-xs text-blue-600 font-normal">(Sélection multiple possible)</span></label>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-2">
+                      <div className="space-y-3">
+                        <label className="block text-base font-extrabold text-slate-700">Styles visuels des illustrations <span className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded-md ml-1">Sélection multiple</span></label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
                           {visualStyles.map(v => {
                             const isSelected = visualStylesSel.includes(v);
                             return (
                               <div 
                                 key={v}
                                 onClick={() => toggleSelection(v, visualStylesSel, setVisualStylesSel)}
-                                className={`cursor-pointer border rounded-md p-3 text-sm flex items-center gap-3 transition-all ${isSelected ? 'bg-blue-50 border-blue-500 text-blue-700 font-medium shadow-sm' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'}`}
+                                className={`cursor-pointer border rounded-2xl p-4 text-base flex items-center gap-3.5 transition-all hover:scale-[1.02] ${isSelected ? 'bg-blue-50/60 border-blue-500 text-blue-900 font-bold shadow-md shadow-blue-50' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'}`}
                               >
                                 <input 
                                   type="checkbox" 
                                   checked={isSelected} 
                                   onChange={() => {}} 
-                                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" 
+                                  className="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-all cursor-pointer" 
                                 />
-                                <span>{v}</span>
+                                <span className="leading-tight">{v}</span>
                               </div>
                             );
                           })}
                         </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Ambiance générale</label>
-                        <select value={atmosphere} onChange={(e) => setAtmosphere(e.target.value)} className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
-                          <option value="">-- Choisir une ambiance --</option>
-                          {atmospheres.map(a => <option key={a} value={a}>{a}</option>)}
-                        </select>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Palette de couleurs</label>
-                        <select value={colorPalette} onChange={(e) => setColorPalette(e.target.value)} className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
-                          <option value="">-- Choisir une palette --</option>
-                          {colorPalettes.map(c => <option key={c} value={c}>{c}</option>)}
-                        </select>
-                      </div>
-                      <div className="space-y-2">
-                        <label className="block text-sm font-medium text-gray-700">Niveau d'animation global</label>
-                        <select value={animationLevel} onChange={(e) => setAnimationLevel(e.target.value)} className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
-                          <option value="">-- Choisir le niveau d'animation --</option>
-                          {animationLevels.map(a => <option key={a} value={a}>{a}</option>)}
-                        </select>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2">
+                        <div className="space-y-2">
+                          <label className="block text-base font-bold text-slate-700">Ambiance générale</label>
+                          <select value={atmosphere} onChange={(e) => setAtmosphere(e.target.value)} className="w-full p-4 text-base border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-white shadow-sm transition-all">
+                            <option value="">-- Choisir une ambiance --</option>
+                            {atmospheres.map(a => <option key={a} value={a}>{a}</option>)}
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="block text-base font-bold text-slate-700">Palette de couleurs</label>
+                          <select value={colorPalette} onChange={(e) => setColorPalette(e.target.value)} className="w-full p-4 text-base border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-white shadow-sm transition-all">
+                            <option value="">-- Choisir une palette --</option>
+                            {colorPalettes.map(c => <option key={c} value={c}>{c}</option>)}
+                          </select>
+                        </div>
+                        <div className="space-y-2">
+                          <label className="block text-base font-bold text-slate-700">Niveau d'animation global</label>
+                          <select value={animationLevel} onChange={(e) => setAnimationLevel(e.target.value)} className="w-full p-4 text-base border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-white shadow-sm transition-all">
+                            <option value="">-- Choisir le niveau d'animation --</option>
+                            {animationLevels.map(a => <option key={a} value={a}>{a}</option>)}
+                          </select>
+                        </div>
                       </div>
 
                       {/* Effets sonores : MULTIPLE CHOIX */}
-                      <div className="space-y-2 md:col-span-2 pt-2 border-t border-gray-200">
-                        <label className="block text-sm font-medium text-gray-700 flex items-center gap-1.5">
-                          <Volume2Icon size={16} /> Effets sonores souhaités <span className="text-xs text-blue-600 font-normal">(Sélection multiple possible)</span>
+                      <div className="space-y-3 pt-6 border-t border-slate-100">
+                        <label className="block text-base font-extrabold text-slate-700 flex items-center gap-2">
+                          <Volume2Icon className="text-slate-500" size={20} /> Effets sonores souhaités <span className="text-xs text-blue-600 font-bold bg-blue-50 px-2 py-1 rounded-md ml-1">Sélection multiple</span>
                         </label>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mt-2">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
                           {soundOptions.map(sound => {
                             const isSelected = soundEffectsSel.includes(sound);
                             return (
                               <div key={sound} 
                                 onClick={() => toggleSelection(sound, soundEffectsSel, setSoundEffectsSel)}
-                                className={`cursor-pointer border rounded-md p-3 text-center text-sm flex items-center justify-center gap-2 transition-all ${isSelected ? 'bg-blue-50 border-blue-500 text-blue-700 font-medium shadow-sm' : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'}`}
+                                className={`cursor-pointer border rounded-2xl p-4 text-center text-base font-bold flex items-center justify-center gap-3 transition-all hover:scale-[1.02] ${isSelected ? 'bg-blue-50 border-blue-500 text-blue-900 shadow-md shadow-blue-50' : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'}`}
                               >
                                 <input 
                                   type="checkbox" 
                                   checked={isSelected} 
                                   onChange={() => {}} 
-                                  className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500" 
+                                  className="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500 cursor-pointer" 
                                 />
                                 <span>{sound}</span>
                               </div>
@@ -611,75 +618,77 @@ L'activité finale devra être livrée sous forme d'une solution complète (${ex
                   </div>
                 )}
 
-                {/* ONGLET 3: INTERACTION & NAVIGATION (VIERGE AU DÉMARRAGE) */}
+                {/* ONGLET 3: INTERACTION & NAVIGATION */}
                 {activeTab === 'interaction' && (
-                  <div className="space-y-6 animate-fadeIn">
-                    <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Navigation et Interaction</h2>
+                  <div className="space-y-8 animate-fadeIn">
+                    <h2 className="text-xl font-extrabold text-slate-950 border-b border-slate-100 pb-3">Navigation et Interaction</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                       
                       {/* Section Navigation */}
-                      <div className="space-y-5 bg-white p-5 rounded-lg border border-gray-200">
-                        <h3 className="font-medium text-blue-700 flex items-center gap-2">
-                          <LayoutTemplateIcon size={18}/> Paramètres de navigation
+                      <div className="space-y-6 bg-slate-50 p-6 sm:p-8 rounded-2xl border border-slate-200/60 shadow-sm">
+                        <h3 className="text-lg font-extrabold text-blue-800 flex items-center gap-2.5">
+                          <LayoutTemplateIcon size={22}/> Paramètres de navigation
                         </h3>
                         <div className="space-y-2">
-                          <label className="block text-sm font-medium text-gray-700">Mode de navigation</label>
-                          <select value={navigationMode} onChange={(e) => setNavigationMode(e.target.value)} className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                          <label className="block text-base font-bold text-slate-700">Mode de navigation</label>
+                          <select value={navigationMode} onChange={(e) => setNavigationMode(e.target.value)} className="w-full p-4 text-base border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-white shadow-sm transition-all">
                             <option value="">-- Choisir un mode de navigation --</option>
                             {navModes.map(n => <option key={n} value={n}>{n}</option>)}
                           </select>
                         </div>
-                        <div className="space-y-2">
-                          <label className="block text-sm font-medium text-gray-700">Afficher l'indicateur de progression</label>
-                          <div className="flex gap-4 mt-1">
-                            <label className="flex items-center gap-2 cursor-pointer">
-                              <input type="radio" name="prog" value="Oui" checked={showProgress === "Oui"} onChange={() => setShowProgress("Oui")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
-                              <span className="text-sm">Oui</span>
+                        <div className="space-y-2 pt-2">
+                          <label className="block text-base font-bold text-slate-700">Afficher l'indicateur de progression</label>
+                          <div className="flex gap-6 mt-3">
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                              <input type="radio" name="prog" value="Oui" checked={showProgress === "Oui"} onChange={() => setShowProgress("Oui")} className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer" />
+                              <span className="text-base font-semibold text-slate-700 group-hover:text-slate-950">Oui</span>
                             </label>
-                            <label className="flex items-center gap-2 cursor-pointer">
-                              <input type="radio" name="prog" value="Non" checked={showProgress === "Non"} onChange={() => setShowProgress("Non")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
-                              <span className="text-sm">Non</span>
+                            <label className="flex items-center gap-3 cursor-pointer group">
+                              <input type="radio" name="prog" value="Non" checked={showProgress === "Non"} onChange={() => setShowProgress("Non")} className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-slate-300 cursor-pointer" />
+                              <span className="text-base font-semibold text-slate-700 group-hover:text-slate-950">Non</span>
                             </label>
                           </div>
                         </div>
                       </div>
 
                       {/* Section Révélation */}
-                      <div className="space-y-5 bg-white p-5 rounded-lg border border-gray-200">
-                        <h3 className="font-medium text-blue-700 flex items-center gap-2">
-                          <MousePointerClickIcon size={18}/> Révélation de la réponse
+                      <div className="space-y-6 bg-slate-50 p-6 sm:p-8 rounded-2xl border border-slate-200/60 shadow-sm">
+                        <h3 className="text-lg font-extrabold text-blue-800 flex items-center gap-2.5">
+                          <MousePointerClickIcon size={22}/> Révélation de la réponse
                         </h3>
                         <div className="space-y-2">
-                          <label className="block text-sm font-medium text-gray-700">Type d'interaction (Bouton)</label>
-                          <select value={interactionType} onChange={(e) => setInteractionType(e.target.value)} className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white">
+                          <label className="block text-base font-bold text-slate-700">Type d'interaction (Bouton)</label>
+                          <select value={interactionType} onChange={(e) => setInteractionType(e.target.value)} className="w-full p-4 text-base border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-white shadow-sm transition-all">
                             <option value="">-- Choisir le type d'interaction --</option>
                             {interactions.map(i => <option key={i} value={i}>{i}</option>)}
                           </select>
                         </div>
-                        <div className="space-y-2">
-                          <label className="block text-sm font-medium text-gray-700">Animation humoristique lors de la révélation</label>
-                          <div className="flex gap-4 mt-1">
-                            <label className="flex items-center gap-2 cursor-pointer">
-                              <input type="radio" name="animRev" value="Oui" checked={revealAnimation === "Oui"} onChange={() => setRevealAnimation("Oui")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
-                              <span className="text-sm">Oui</span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer">
-                              <input type="radio" name="animRev" value="Non" checked={revealAnimation === "Non"} onChange={() => setRevealAnimation("Non")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
-                              <span className="text-sm">Non</span>
-                            </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                          <div className="space-y-2">
+                            <label className="block text-base font-bold text-slate-700">Animation révélation</label>
+                            <div className="flex gap-4 mt-2">
+                              <label className="flex items-center gap-2.5 cursor-pointer group">
+                                <input type="radio" name="animRev" value="Oui" checked={revealAnimation === "Oui"} onChange={() => setRevealAnimation("Oui")} className="w-5 h-5 text-blue-600 border-slate-300 cursor-pointer" />
+                                <span className="text-base font-semibold text-slate-700 group-hover:text-slate-950">Oui</span>
+                              </label>
+                              <label className="flex items-center gap-2.5 cursor-pointer group">
+                                <input type="radio" name="animRev" value="Non" checked={revealAnimation === "Non"} onChange={() => setRevealAnimation("Non")} className="w-5 h-5 text-blue-600 border-slate-300 cursor-pointer" />
+                                <span className="text-base font-semibold text-slate-700 group-hover:text-slate-950">Non</span>
+                              </label>
+                            </div>
                           </div>
-                        </div>
-                        <div className="space-y-2">
-                          <label className="block text-sm font-medium text-gray-700">Effet sonore spécifique lors de la révélation</label>
-                          <div className="flex gap-4 mt-1">
-                            <label className="flex items-center gap-2 cursor-pointer">
-                              <input type="radio" name="sndRev" value="Oui" checked={revealSound === "Oui"} onChange={() => setRevealSound("Oui")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
-                              <span className="text-sm">Oui</span>
-                            </label>
-                            <label className="flex items-center gap-2 cursor-pointer">
-                              <input type="radio" name="sndRev" value="Non" checked={revealSound === "Non"} onChange={() => setRevealSound("Non")} className="w-4 h-4 text-blue-600 focus:ring-blue-500 border-gray-300" />
-                              <span className="text-sm">Non</span>
-                            </label>
+                          <div className="space-y-2">
+                            <label className="block text-base font-bold text-slate-700">Effet sonore révélation</label>
+                            <div className="flex gap-4 mt-2">
+                              <label className="flex items-center gap-2.5 cursor-pointer group">
+                                <input type="radio" name="sndRev" value="Oui" checked={revealSound === "Oui"} onChange={() => setRevealSound("Oui")} className="w-5 h-5 text-blue-600 border-slate-300 cursor-pointer" />
+                                <span className="text-base font-semibold text-slate-700 group-hover:text-slate-950">Oui</span>
+                              </label>
+                              <label className="flex items-center gap-2.5 cursor-pointer group">
+                                <input type="radio" name="sndRev" value="Non" checked={revealSound === "Non"} onChange={() => setRevealSound("Non")} className="w-5 h-5 text-blue-600 border-slate-300 cursor-pointer" />
+                                <span className="text-base font-semibold text-slate-700 group-hover:text-slate-950">Non</span>
+                              </label>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -688,87 +697,87 @@ L'activité finale devra être livrée sous forme d'une solution complète (${ex
                   </div>
                 )}
 
-                {/* ONGLET 4: BLAGUES (VIERGES SANS CONTENU PRÉ-REMPLI) */}
+                {/* ONGLET 4: BLAGUES (DESIGN CARTE EN RELIEF ET SAISIE TRÈS CONVIVIALE) */}
                 {activeTab === 'jokes' && (
-                  <div className="space-y-6 animate-fadeIn">
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b pb-4 gap-4">
+                  <div className="space-y-8 animate-fadeIn">
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-slate-100 pb-5 gap-4">
                       <div>
-                        <h2 className="text-lg font-semibold text-gray-800">Contenu : Les Blagues</h2>
-                        <p className="text-sm text-gray-500">Ajoutez vos propres blagues ci-dessous (laissez parler votre créativité !).</p>
+                        <h2 className="text-xl font-extrabold text-slate-950">Contenu : Les Blagues</h2>
+                        <p className="text-sm sm:text-base text-slate-500 mt-1">Ajoutez vos propres blagues ci-dessous (laissez parler votre créativité !).</p>
                       </div>
                       
-                      <div className="flex bg-gray-200 p-1 rounded-lg">
+                      <div className="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
                         <button 
                           type="button"
                           onClick={() => setJokeInputMode('bulk')}
-                          className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${jokeInputMode === 'bulk' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-800'}`}
+                          className={`flex items-center gap-2.5 px-4 py-2 text-base font-bold rounded-xl transition-all ${jokeInputMode === 'bulk' ? 'bg-white text-blue-600 shadow-md' : 'text-slate-600 hover:text-slate-800'}`}
                         >
-                          <AlignLeftIcon size={16} /> Coller en vrac
+                          <AlignLeftIcon size={18} /> Coller en vrac
                         </button>
                         <button 
                           type="button"
                           onClick={() => setJokeInputMode('structured')}
-                          className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${jokeInputMode === 'structured' ? 'bg-white text-blue-600 shadow-sm' : 'text-gray-600 hover:text-gray-800'}`}
+                          className={`flex items-center gap-2.5 px-4 py-2 text-base font-bold rounded-xl transition-all ${jokeInputMode === 'structured' ? 'bg-white text-blue-600 shadow-md' : 'text-slate-600 hover:text-slate-800'}`}
                         >
-                          <MessageSquareIcon size={16} /> Saisie guidée
+                          <MessageSquareIcon size={18} /> Saisie guidée
                         </button>
                       </div>
                     </div>
                     
                     {jokeInputMode === 'bulk' ? (
-                      <div className="space-y-3">
-                        <label className="block text-sm font-medium text-gray-700">
+                      <div className="space-y-3 animate-fadeIn">
+                        <label className="block text-base font-bold text-slate-700">
                           Collez toutes vos blagues ici (grand encadré vierge prêt pour l'intégration en bloc) :
                         </label>
                         <textarea 
                           value={bulkJokesText}
                           onChange={(e) => setBulkJokesText(e.target.value)}
-                          className="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 min-h-[300px] resize-y font-mono text-sm bg-white"
+                          className="w-full p-5 border border-slate-300 rounded-2xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 min-h-[350px] resize-y font-mono text-base bg-white shadow-inner transition-all placeholder:text-slate-400"
                           placeholder="Collez ou tapez vos blagues en toute liberté...&#10;Exemple :&#10;1. Toc toc toc ! Qui est là ? C'est le livre. Quel livre ? Le livre de mathématiques qui a trop de problèmes !&#10;2. Quel est le comble pour un poisson ? Avoir peur de l'eau."
                         />
                       </div>
                     ) : (
-                      <>
-                        <div className="space-y-4">
+                      <div className="space-y-6 animate-fadeIn">
+                        <div className="space-y-5">
                           {jokes.map((joke, index) => (
-                            <div key={index} className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm relative group transition-all hover:border-blue-300">
-                              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div key={index} className="bg-slate-50/50 p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm relative group transition-all hover:border-blue-300 hover:bg-white">
+                              <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <button 
                                   type="button"
                                   onClick={() => removeJoke(index)}
-                                  className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded-md transition-colors"
+                                  className="text-red-500 hover:text-red-700 hover:bg-red-50 p-2.5 rounded-xl transition-all hover:scale-[1.05]"
                                   title="Supprimer cette blague"
                                   disabled={jokes.length === 1}
                                 >
-                                  <Trash2Icon size={18} />
+                                  <Trash2Icon size={22} />
                                 </button>
                               </div>
                               
-                              <div className="flex items-center gap-2 mb-4">
-                                <span className="flex items-center justify-center w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-bold">
+                              <div className="flex items-center gap-3 mb-5">
+                                <span className="flex items-center justify-center w-8 h-8 bg-blue-600 text-white rounded-full text-sm font-extrabold shadow-md shadow-blue-100">
                                   {index + 1}
                                 </span>
-                                <h4 className="font-medium text-gray-700">Blague {index + 1}</h4>
+                                <h4 className="text-lg font-extrabold text-slate-900">Blague {index + 1}</h4>
                               </div>
 
-                              <div className="space-y-4 pl-8">
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-600 mb-1">Question (La mise en situation) :</label>
+                              <div className="space-y-5 pl-0 sm:pl-11">
+                                <div className="space-y-1.5">
+                                  <label className="block text-sm sm:text-base font-bold text-slate-600">Question (La mise en situation) :</label>
                                   <input 
                                     type="text" 
                                     value={joke.q} 
                                     onChange={(e) => updateJoke(index, 'q', e.target.value)} 
-                                    className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white" 
+                                    className="w-full p-4 text-base border border-slate-300 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-500 bg-white shadow-sm transition-all" 
                                     placeholder="Saisissez la question..."
                                   />
                                 </div>
-                                <div>
-                                  <label className="block text-sm font-medium text-gray-600 mb-1">Réponse (La chute) :</label>
+                                <div className="space-y-1.5">
+                                  <label className="block text-sm sm:text-base font-bold text-slate-600">Réponse (La chute) :</label>
                                   <input 
                                     type="text" 
                                     value={joke.a} 
                                     onChange={(e) => updateJoke(index, 'a', e.target.value)} 
-                                    className="w-full p-2.5 border border-gray-300 rounded-md focus:ring-2 focus:ring-green-500 focus:border-green-500 bg-green-50/30" 
+                                    className="w-full p-4 text-base border border-slate-300 rounded-xl focus:ring-4 focus:ring-green-100 focus:border-green-500 bg-green-50/20 shadow-sm transition-all" 
                                     placeholder="Saisissez la chute..."
                                   />
                                 </div>
@@ -781,25 +790,25 @@ L'activité finale devra être livrée sous forme d'une solution complète (${ex
                           <button 
                             type="button"
                             onClick={addJoke}
-                            className="flex items-center justify-center w-full gap-2 py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50 transition-colors font-medium"
+                            className="flex items-center justify-center w-full gap-3 py-4 border-2 border-dashed border-slate-300 rounded-2xl text-slate-600 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50/50 transition-all font-bold text-lg hover:scale-[1.01]"
                           >
-                            <PlusIcon size={20} />
+                            <PlusIcon size={22} />
                             Ajouter une nouvelle blague
                           </button>
                         </div>
-                      </>
+                      </div>
                     )}
                   </div>
                 )}
 
-                {/* Bouton générer principal */}
-                <div className="mt-8 pt-6 border-t border-gray-200 flex justify-center">
+                {/* Bouton générer principal - Un bouton majestueux et invitant */}
+                <div className="mt-12 pt-8 border-t border-slate-100 flex justify-center">
                   <button 
                     type="button"
                     onClick={generatePromptText}
-                    className="flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-3.5 rounded-lg font-bold text-lg shadow-lg hover:shadow-xl transition-all transform hover:-translate-y-0.5 w-full sm:w-auto"
+                    className="flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 hover:from-blue-700 hover:via-indigo-700 hover:to-indigo-800 text-white px-10 py-5 rounded-2xl font-black text-xl shadow-xl hover:shadow-2xl hover:scale-[1.03] active:scale-[0.97] transition-all w-full sm:w-auto"
                   >
-                    <PlayIcon size={20} fill="currentColor" />
+                    <PlayIcon size={24} fill="currentColor" />
                     Générer la requête optimisée
                   </button>
                 </div>
@@ -807,40 +816,40 @@ L'activité finale devra être livrée sous forme d'une solution complète (${ex
               </div>
             </div>
 
-            {/* RÉSULTAT : LA REQUÊTE GÉNÉRÉE */}
+            {/* RÉSULTAT : LA REQUÊTE GÉNÉRÉE (SUPER DESIGN DU BLOCK DE REQUÊTE) */}
             {generatedPrompt && (
-              <div className="mt-8 mb-12 bg-gray-900 rounded-xl shadow-xl overflow-hidden border border-gray-800 animate-slideUp">
-                <div className="bg-gray-800 px-6 py-4 flex items-center justify-between border-b border-gray-700">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle2Icon className="text-green-400" size={24} />
-                    <h3 className="text-lg font-semibold text-white">Requête prête !</h3>
+              <div className="mt-12 mb-16 bg-slate-900 rounded-3xl shadow-2xl overflow-hidden border border-slate-800 animate-slideUp">
+                <div className="bg-slate-800/80 px-6 sm:px-8 py-5 flex flex-col sm:flex-row items-center justify-between border-b border-slate-800 gap-4">
+                  <div className="flex items-center gap-3.5">
+                    <CheckCircle2Icon className="text-emerald-400" size={26} />
+                    <h3 className="text-xl font-black text-white">Requête de blagues prête !</h3>
                   </div>
                   <button 
                     type="button"
                     onClick={copyToClipboard}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-colors ${
-                      copied ? 'bg-green-500/20 text-green-400' : 'bg-white/10 text-white hover:bg-white/20'
+                    className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold text-base transition-all hover:scale-[1.03] active:scale-[0.97] ${
+                      copied ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-white/10 text-white hover:bg-white/20 border border-white/5'
                     }`}
                   >
-                    {copied ? <><CheckCircle2Icon size={16} /> Copié !</> : <><CopyIcon size={16} /> Copier le texte</>}
+                    {copied ? <><CheckCircle2Icon size={18} /> Copié !</> : <><CopyIcon size={18} /> Copier le prompt</>}
                   </button>
                 </div>
-                <div className="p-6">
-                  <p className="text-gray-400 text-sm mb-4 italic">
-                    Copiez le texte ci-dessous et collez-le dans l'IA cible (ChatGPT, Claude, Gemini, etc.) pour générer votre activité interactive de blagues.
+                <div className="p-6 sm:p-8">
+                  <p className="text-slate-400 text-base mb-6 italic leading-relaxed">
+                    Copiez le texte ci-dessous et collez-le directement dans votre IA préférée (ChatGPT, Claude, Gemini, etc.) pour instantanément générer votre activité de blagues de niveau d'édition professionnel.
                   </p>
-                  <div className="bg-gray-950 rounded-lg p-5 border border-gray-800 overflow-x-auto relative">
-                    <pre className="text-gray-300 font-mono text-sm whitespace-pre-wrap leading-relaxed">
+                  <div className="bg-slate-950 rounded-2xl p-6 border border-slate-800 overflow-x-auto relative shadow-inner">
+                    <pre className="text-slate-300 font-mono text-sm sm:text-base whitespace-pre-wrap leading-relaxed select-all">
                       {generatedPrompt}
                     </pre>
                   </div>
-                  <div className="mt-6 flex justify-center">
+                  <div className="mt-8 flex justify-center">
                     <button 
                       type="button"
                       onClick={copyToClipboard}
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                      className="flex items-center gap-3 bg-blue-600 hover:bg-blue-500 text-white px-8 py-4 rounded-xl font-bold text-lg transition-all hover:scale-[1.03] active:scale-[0.97] shadow-lg shadow-blue-900/30"
                     >
-                      <CopyIcon size={18} /> {copied ? 'Texte copié dans le presse-papier !' : 'Copier la requête complète'}
+                      <CopyIcon size={20} /> {copied ? 'Texte copié dans votre presse-papiers !' : 'Copier la requête complète'}
                     </button>
                   </div>
                 </div>
