@@ -11,6 +11,13 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
   <!-- Babel CDN pour compiler le JSX à la volée dans le navigateur -->
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script>
+    Babel.registerPreset('react-classic', {
+      presets: [
+        [Babel.availablePresets['react'], { runtime: 'classic' }]
+      ]
+    });
+  </script>
   
   <style>
     .hide-scrollbar::-webkit-scrollbar { display: none; }
@@ -26,7 +33,7 @@
   <div id="root"></div>
 
   <!-- Script React écrit en JSX, compilé par Babel -->
-  <script type="text/babel">
+  <script type="text/babel" data-presets="react-classic">
     const { useState } = React;
 
     // --- COMPOSANTS D'ICÔNES SVG INTERNES (Pour éliminer les dépendances externes lourdes) ---
